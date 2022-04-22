@@ -11,7 +11,15 @@ pipeline {
         sh '''
         sudo docker build -t newverka/testweb:newnewmain .
         sudo docker push newverka/testweb:newnewmain
-        '''
+        sudo echo "Jenkins shop test" > index.html 
+	sudo docker build -t newverka/testweb:newshop .
+        sudo docker push newverka/testweb:newshop
+
+	sudo echo "Jenkins blog test" > index.html
+        sudo docker build -t newverka/testweb:newblog .
+        sudo docker push newverka/testweb:newblog
+
+	'''
       }
     }
     stage('deploy k8s') {
@@ -19,6 +27,9 @@ pipeline {
         sh '''
 	sudo klogin
         sudo kubectl set image deploy deploy-main ctn-main=newverka/testweb:newnewmain
+	sudo kubectl set image deploy deploy-shop ctn-shop=newverka/testweb:newshop
+	sudo kubectl set image deploy deploy-blog ctn-blog=newverka/testweb:newblog
+
         '''
       }
     }
